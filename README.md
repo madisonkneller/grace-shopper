@@ -1,10 +1,12 @@
-# Grace Bopper
+# Persephone Archive
 
 ## What It Is...
 
 An ecommerce site offering up rare, sought after clothing and accessories.
 
-# SETUP
+View the site here: https://gracebopper.herokuapp.com
+
+# To run on your machine...
 
 * Mac/OS/Linux
 
