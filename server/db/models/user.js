@@ -1,12 +1,41 @@
 const crypto = require('crypto')
 const Sequelize = require('sequelize')
 const db = require('../db')
+const Product = require('./product')
+const Order = require('./order')
 
 const User = db.define('user', {
+  firstName: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    },
+    //https://sequelize.readthedocs.io/en/2.0/docs/models-definition/#:~:text=To%20define%20mappings%20between%20a,was%20updated%20the%20last%20time to turn values uppercase. Does it have to be async?
+    setDataValue: function(val) {
+      this.setDataValue('firstName', val.toUpperCase())
+    }
+  },
+  lastName: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    },
+    setDataValue: function(val) {
+      this.setDataValue('lastName', val.toUpperCase())
+    }
+  },
   email: {
     type: Sequelize.STRING,
     unique: true,
-    allowNull: false
+    validate: {
+      isEmail: true,
+      notEmpty: true
+    },
+    setDataValue: function(val) {
+      this.setDataValue('email', val.toUpperCase())
+    }
   },
   password: {
     type: Sequelize.STRING,
@@ -26,6 +55,13 @@ const User = db.define('user', {
   },
   googleId: {
     type: Sequelize.STRING
+  },
+  active: {
+    type: Sequelize.BOOLEAN
+  },
+  isAdmin: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
   }
 })
 
@@ -53,6 +89,15 @@ User.encryptPassword = function(plainText, salt) {
     .digest('hex')
 }
 
+User.findCart = function(req, res, next) {
+  return Order.findOne({
+    where: {
+      userId: req.user.id,
+      status: 'Cart'
+    },
+    include: Product
+  })
+}
 /**
  * hooks
  */
@@ -67,4 +112,9 @@ User.beforeCreate(setSaltAndPassword)
 User.beforeUpdate(setSaltAndPassword)
 User.beforeBulkCreate(users => {
   users.forEach(setSaltAndPassword)
+})
+
+User.beforeCreate(user => {
+  const upperCase = user.email.toUpperCase()
+  user.email = upperCase
 })
