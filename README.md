@@ -4,7 +4,7 @@
 
 An ecommerce site offering up rare, sought after clothing and accessories.
 
-View the site here: https://gracebopper.herokuapp.com
+Visit the site here: https://gracebopper.herokuapp.com
 
 # To run on your machine...
 
